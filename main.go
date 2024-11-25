@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/yansigit/cmd-gpt/cmd"
+	"github.com/yansigit/cmd-gpt/config"
 )
 
 func main() {
@@ -15,6 +16,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config.LoadConfig()
 
 	cmd.Execute()
 }

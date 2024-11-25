@@ -7,18 +7,11 @@ import (
 	"os/exec"
 
 	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/anthropics/anthropic-sdk-go/option"
-	"github.com/yansigit/cmd-gpt/config"
 	cnst "github.com/yansigit/cmd-gpt/constants"
 )
 
 func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string) error {
-	_config := config.LoadConfig()
-	anthropicApiKey := _config.AnthropicKey
-
-	client := anthropic.NewClient(
-		option.WithAPIKey(anthropicApiKey),
-	)
+	client := anthropic.NewClient()
 
 	prompt := input
 	if commandType == cnst.ShellCodeGen {
