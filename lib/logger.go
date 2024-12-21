@@ -47,25 +47,50 @@ func GetLogger() *Logger {
 
 // Log methods
 func (l *Logger) Info(v ...interface{}) {
-	l.infoLog.Printf("%s\n", color.New(color.FgBlue).SprintFunc()(fmt.Sprint(v...)))
+	l.infoLog.Printf("%s\n", fmt.Sprint(v...))
 }
 
 func (l *Logger) Debug(v ...interface{}) {
-	l.debugLog.Printf("%s\n", color.New(color.FgCyan).SprintFunc()(fmt.Sprint(v...)))
+	l.debugLog.Printf("%s\n", fmt.Sprint(v...))
 }
 
 func (l *Logger) Warn(v ...interface{}) {
-	l.warnLog.Printf("%s\n", color.New(color.FgYellow).SprintFunc()(fmt.Sprint(v...)))
+	l.warnLog.Printf("%s\n", fmt.Sprint(v...))
 }
 
 func (l *Logger) Success(v ...interface{}) {
-	l.successLog.Printf("%s\n", color.New(color.FgGreen).SprintFunc()(fmt.Sprint(v...)))
+	l.successLog.Printf("%s\n", fmt.Sprint(v...))
 }
 
 func (l *Logger) Error(v ...interface{}) {
-	l.errorLog.Printf("%s\n", color.New(color.FgRed).SprintFunc()(fmt.Sprint(v...)))
+	l.errorLog.Printf("%s\n", fmt.Sprint(v...))
 }
 
 func (l *Logger) Fatal(v ...interface{}) {
-	l.fatalLog.Fatalf("%s\n", color.New(color.FgHiRed).SprintFunc()(fmt.Sprint(v...)))
+	l.fatalLog.Fatalf("%s\n", fmt.Sprint(v...))
+}
+
+// Formatted Log methods
+func (l *Logger) Infof(format string, v ...interface{}) {
+	l.infoLog.Printf("%s\n", color.New(color.FgBlue).SprintfFunc()(format, v...))
+}
+
+func (l *Logger) Debugf(format string, v ...interface{}) {
+	l.debugLog.Printf("%s\n", color.New(color.FgCyan).SprintfFunc()(format, v...))
+}
+
+func (l *Logger) Warnf(format string, v ...interface{}) {
+	l.warnLog.Printf("%s\n", color.New(color.FgYellow).SprintfFunc()(format, v...))
+}
+
+func (l *Logger) Successf(format string, v ...interface{}) {
+	l.successLog.Printf("%s\n", color.New(color.FgGreen).SprintfFunc()(format, v...))
+}
+
+func (l *Logger) Errorf(format string, v ...interface{}) {
+	l.errorLog.Printf("%s\n", color.New(color.FgRed).SprintfFunc()(format, v...))
+}
+
+func (l *Logger) Fatalf(format string, v ...interface{}) {
+	l.fatalLog.Fatalf("%s\n", color.New(color.FgHiRed).SprintfFunc()(format, v...))
 }
