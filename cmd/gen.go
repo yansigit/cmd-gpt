@@ -23,7 +23,7 @@ var genCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if err := handlers.HandleChat(cnst.ShellCodeGen, shellType, prompt); err != nil {
+		if err := handlers.HandleChat(cnst.ShellCodeGen, shellType, prompt, ""); err != nil {
 			panic(err)
 		}
 	},

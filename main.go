@@ -17,6 +17,11 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	err = config.InitConfig()
+	if err != nil {
+		log.Fatal("Error initializing config:", err)
+	}
+
 	config.LoadConfig()
 
 	cmd.Execute()

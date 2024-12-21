@@ -1,18 +1,18 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
 
-	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/joho/godotenv"
+	"github.com/yansigit/cmd-gpt/config"
 	cnst "github.com/yansigit/cmd-gpt/constants"
 )
 
-func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string) error {
-	client := anthropic.NewClient()
-
+func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string, provider string) error {
+	godotenv.Load()
+	var res string
 	prompt := input
 	if commandType == cnst.ShellCodeGen {
 		if shell == cnst.None {
@@ -21,27 +21,42 @@ func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string
 		prompt = fmt.Sprintf("Generate a %s command for: %s. Only output the command, no explanations.", shell, input)
 	}
 
-	msg, err := client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(anthropic.ModelClaude3_5HaikuLatest),
-		MaxTokens: anthropic.F(int64(1024)),
-		Messages: anthropic.F([]anthropic.MessageParam{
-			anthropic.NewAssistantMessage(anthropic.NewTextBlock("You are a terminal assistant. Main purpose is to help the user to execute commands in the terminal. You will be given a command and you will execute it in the terminal. You will only output the command, no explanations.")),
-			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)),
-		}),
-	})
-
+	cfg, err := config.LoadConfig()
 	if err != nil {
-		fmt.Println("Error occurred during API call:", err)
 		return err
 	}
 
-	// prettyJSON, _ := json.MarshalIndent(msg.Content, "", "  ")
-	// fmt.Println(string(prettyJSON))
+	if provider == "" {
+		provider = cfg.DefaultProvider
+	}
 
-	res := msg.Content[0].Text
+	switch provider {
+	case cnst.OpenAI:
+		res, err = HandleOpenAI(prompt)
+		if err != nil {
+			return err
+		}
+	case cnst.Anthropic:
+		res, err = HandleAnthropic(prompt)
+		if err != nil {
+			return err
+		}
+	case cnst.Google:
+		res, err = HandleGoogle(prompt)
+		if err != nil {
+			return err
+		}
+	case cnst.OpenRouter:
+		res, err = HandleOpenRouter(prompt)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("invalid provider: %s", provider)
+	}
 
 	if shell != cnst.None {
-		err = executeCommand(res, shell)
+		err := executeCommand(res, shell)
 		if err != nil {
 			fmt.Println("Error occurred during executing the command:", err)
 			return err

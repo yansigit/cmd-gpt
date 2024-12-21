@@ -7,8 +7,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	cnst "github.com/yansigit/cmd-gpt/constants"
-	"github.com/yansigit/cmd-gpt/handlers"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -16,14 +14,6 @@ var rootCmd = &cobra.Command{
 	Use:   "cmd-gpt",
 	Short: "execute gpt in your terminal",
 	Long:  `This command executes gpt (llm) in your terminal.`,
-
-	Run: func(cmd *cobra.Command, args []string) {
-		prompt, _ := cmd.Flags().GetString("prompt")
-
-		if err := handlers.HandleChat(cnst.JustChat, "", prompt); err != nil {
-			panic(err)
-		}
-	},
 }
 
 func Execute() {
@@ -34,5 +24,4 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("prompt", "p", "", "Prompt to generate content")
 }

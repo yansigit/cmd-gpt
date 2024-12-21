@@ -9,10 +9,18 @@ const (
 	JustChat     CommandType = "chat"
 	ShellCodeGen CommandType = "shell_code_generation"
 )
+
 const (
 	Bash       ShellType = "bash"
 	PowerShell ShellType = "powershell"
 	None       ShellType = ""
+)
+
+const (
+	OpenAI     string = "openai"
+	Anthropic  string = "anthropic"
+	Google     string = "google"
+	OpenRouter string = "openrouter"
 )
 
 func ToShellType(s string) (ShellType, error) {
