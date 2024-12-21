@@ -18,13 +18,18 @@ var genCmd = &cobra.Command{
 		prompt, _ := cmd.Flags().GetString("prompt")
 		shell, _ := cmd.Flags().GetString("shell")
 
+		if prompt == "" || shell == "" {
+			cmd.Help()
+			return
+		}
+
 		shellType, err := cnst.ToShellType(shell)
 		if err != nil {
-			panic(err)
+			logger.Fatal(err)
 		}
 
 		if err := handlers.HandleChat(cnst.ShellCodeGen, shellType, prompt, ""); err != nil {
-			panic(err)
+			logger.Fatal(err)
 		}
 	},
 }
