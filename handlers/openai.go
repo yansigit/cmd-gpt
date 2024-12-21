@@ -8,7 +8,7 @@ import (
 	"github.com/yansigit/cmd-gpt/lib"
 )
 
-func HandleOpenAI(prompt string) (string, error) {
+func HandleOpenAI(systemPrompt string, prompt string) (string, error) {
 	cfg, err := lib.LoadConfig()
 	if err != nil {
 		return "", err
@@ -20,7 +20,7 @@ func HandleOpenAI(prompt string) (string, error) {
 		Messages: []openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleSystem,
-				Content: "You are a terminal assistant. Main purpose is to help the user to execute commands in the terminal. You will be given a command and you will execute it in the terminal. You will only output the command, no explanations.",
+				Content: systemPrompt,
 			},
 			{
 				Role:    openai.ChatMessageRoleUser,

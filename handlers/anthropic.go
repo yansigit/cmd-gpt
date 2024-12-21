@@ -7,13 +7,14 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 )
 
-func HandleAnthropic(prompt string) (string, error) {
+func HandleAnthropic(systemPrompt string, prompt string) (string, error) {
 	client := anthropic.NewClient()
 	msg, err := client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(anthropic.ModelClaude3_5HaikuLatest),
+		// Model:     anthropic.F(anthropic.ModelClaude3_5HaikuLatest),
+		Model:     anthropic.F(cfg.DefaultModel),
 		MaxTokens: anthropic.F(int64(1024)),
 		Messages: anthropic.F([]anthropic.MessageParam{
-			anthropic.NewAssistantMessage(anthropic.NewTextBlock("You are a terminal assistant. Main purpose is to help the user to execute commands in the terminal. You will be given a command and you will execute it in the terminal. You will only output the command, no explanations.")),
+			anthropic.NewAssistantMessage(anthropic.NewTextBlock(systemPrompt)),
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)),
 		}),
 	})

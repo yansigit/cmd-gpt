@@ -11,6 +11,7 @@ import (
 )
 
 var logger *lib.Logger
+var cfg *lib.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -28,4 +29,10 @@ func Execute() {
 
 func init() {
 	logger = lib.GetLogger()
+
+	var err error
+	cfg, err = lib.LoadConfig()
+	if err != nil {
+		logger.Fatal("Error loading config:", err)
+	}
 }

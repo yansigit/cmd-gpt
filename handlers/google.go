@@ -9,7 +9,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func HandleGoogle(prompt string) (string, error) {
+func HandleGoogle(systemPrompt string, prompt string) (string, error) {
 	ctx := context.Background()
 	cfg, err := lib.LoadConfig()
 	if err != nil {
@@ -22,10 +22,15 @@ func HandleGoogle(prompt string) (string, error) {
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-pro")
+	model := client.GenerativeModel(cfg.DefaultModel)
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{
+			genai.Text(systemPrompt),
+		},
+	}
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		fmt.Println("Error occurred during Google API call:", err)
+		logger.Error("Error occurred during Google API call:", err)
 		return "", err
 	}
 	if len(resp.Candidates) > 0 && len(resp.Candidates[0].Content.Parts) > 0 {
@@ -33,5 +38,5 @@ func HandleGoogle(prompt string) (string, error) {
 			return string(text), nil
 		}
 	}
-	return "", fmt.Errorf("no response from google")
+	return "", logger.Errorf("no response from google")
 }

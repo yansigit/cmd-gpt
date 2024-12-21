@@ -86,11 +86,14 @@ func (l *Logger) Warnf(format string, v ...interface{}) {
 func (l *Logger) Successf(format string, v ...interface{}) {
 	l.successLog.Printf("%s\n", color.New(color.FgGreen).SprintfFunc()(format, v...))
 }
-
-func (l *Logger) Errorf(format string, v ...interface{}) {
-	l.errorLog.Printf("%s\n", color.New(color.FgRed).SprintfFunc()(format, v...))
+func (l *Logger) Errorf(format string, v ...interface{}) error {
+	err := fmt.Errorf(format, v...)
+	l.errorLog.Printf("%s\n", color.New(color.FgRed).Sprint(err))
+	return err
 }
 
-func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.fatalLog.Fatalf("%s\n", color.New(color.FgHiRed).SprintfFunc()(format, v...))
+func (l *Logger) Fatalf(format string, v ...interface{}) error {
+	err := fmt.Errorf(format, v...)
+	l.fatalLog.Fatalf("%s\n", color.New(color.FgHiRed).Sprint(err))
+	return err
 }

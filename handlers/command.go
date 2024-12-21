@@ -12,44 +12,42 @@ import (
 )
 
 var logger *lib.Logger
+var cfg *lib.Config
 
 func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string, provider string) error {
 	var res string
+	systemPrompt := "You are a terminal assistant. Main purpose is to help the user to execute commands in the terminal. You will be given a command and you will execute it in the terminal. You will only output the command, no explanations."
 	prompt := input
 	if commandType == cnst.ShellCodeGen {
 		if shell == cnst.None {
 			return fmt.Errorf("shell param is empty")
 		}
-		prompt = fmt.Sprintf("Generate a %s command for: %s. Only output the command, no explanations.", shell, input)
-	}
-
-	cfg, err := lib.LoadConfig()
-	if err != nil {
-		return err
+		prompt = fmt.Sprintf("Generate a %s command for: %s.", shell, input)
 	}
 
 	if provider == "" {
 		provider = cfg.DefaultProvider
 	}
 
+	var err error
 	switch provider {
 	case cnst.OpenAI:
-		res, err = HandleOpenAI(prompt)
+		res, err = HandleOpenAI(systemPrompt, prompt)
 		if err != nil {
 			return err
 		}
 	case cnst.Anthropic:
-		res, err = HandleAnthropic(prompt)
+		res, err = HandleAnthropic(systemPrompt, prompt)
 		if err != nil {
 			return err
 		}
 	case cnst.Google:
-		res, err = HandleGoogle(prompt)
+		res, err = HandleGoogle(systemPrompt, prompt)
 		if err != nil {
 			return err
 		}
 	case cnst.OpenRouter:
-		res, err = HandleOpenRouter(prompt)
+		res, err = HandleOpenRouter(systemPrompt, prompt)
 		if err != nil {
 			return err
 		}
@@ -67,7 +65,7 @@ func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string
 		}
 		if confirmation {
 			if err := executeCommand(res, shell); err != nil {
-				logger.Errorf("Error occurred during executing the command:", err)
+				logger.Error("Error occurred during executing the command:", err)
 				return err
 			}
 		} else {
@@ -96,4 +94,10 @@ func executeCommand(command string, shell cnst.ShellType) error {
 
 func init() {
 	logger = lib.GetLogger()
+
+	var err error
+	cfg, err = lib.LoadConfig()
+	if err != nil {
+		logger.Fatal("Error loading config:", err)
+	}
 }

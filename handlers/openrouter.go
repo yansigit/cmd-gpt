@@ -27,7 +27,7 @@ type OpenRouterResponse struct {
 	} `json:"choices"`
 }
 
-func HandleOpenRouter(prompt string) (string, error) {
+func HandleOpenRouter(systemPrompt string, prompt string) (string, error) {
 	cfg, err := lib.LoadConfig()
 	if err != nil {
 		return "", err
@@ -39,12 +39,16 @@ func HandleOpenRouter(prompt string) (string, error) {
 
 	apiKey := cfg.OpenRouterKey
 	if apiKey == "" {
-		return "", fmt.Errorf("OPENROUTER_API_KEY environment variable is not set")
+		return "", logger.Errorf("OPENROUTER api key is not set")
 	}
 
 	requestBody, err := json.Marshal(OpenRouterRequest{
 		Model: cfg.DefaultModel,
 		Messages: []OpenRouterMessage{
+			{
+				Role:    "system",
+				Content: systemPrompt,
+			},
 			{
 				Role:    "user",
 				Content: prompt,
@@ -73,7 +77,7 @@ func HandleOpenRouter(prompt string) (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("openrouter api error: %s", resp.Status)
+		return "", logger.Errorf("openrouter api error: %s", resp.Status)
 	}
 
 	var openRouterResponse OpenRouterResponse
@@ -85,5 +89,5 @@ func HandleOpenRouter(prompt string) (string, error) {
 		return openRouterResponse.Choices[0].Message.Content, nil
 	}
 
-	return "", fmt.Errorf("no response from openrouter")
+	return "", logger.Errorf("no response from openrouter")
 }
