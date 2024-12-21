@@ -3,15 +3,18 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/sashabaranov/go-openai"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 func HandleOpenAI(prompt string) (string, error) {
-	godotenv.Load()
-	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
+	cfg, err := lib.LoadConfig()
+	if err != nil {
+		return "", err
+	}
+
+	client := openai.NewClient(cfg.OpenAIKey)
 	resp, err := client.CreateChatCompletion(context.Background(), openai.ChatCompletionRequest{
 		Model: openai.GPT3Dot5Turbo,
 		Messages: []openai.ChatCompletionMessage{

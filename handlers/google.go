@@ -3,17 +3,19 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
+	"github.com/yansigit/cmd-gpt/lib"
 	"google.golang.org/api/option"
 )
 
 func HandleGoogle(prompt string) (string, error) {
-	godotenv.Load()
 	ctx := context.Background()
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GOOGLE_API_KEY")))
+	cfg, err := lib.LoadConfig()
+	if err != nil {
+		return "", err
+	}
+	client, err := genai.NewClient(ctx, option.WithAPIKey(cfg.GoogleAPIKey))
 	if err != nil {
 		fmt.Println("Error occurred during Google API client creation:", err)
 		return "", err

@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/yansigit/cmd-gpt/lib"
 )
 
@@ -30,7 +28,6 @@ type OpenRouterResponse struct {
 }
 
 func HandleOpenRouter(prompt string) (string, error) {
-	godotenv.Load()
 	cfg, err := lib.LoadConfig()
 	if err != nil {
 		return "", err
@@ -40,7 +37,7 @@ func HandleOpenRouter(prompt string) (string, error) {
 		cfg.DefaultModel = "gemini-2.0-flash"
 	}
 
-	apiKey := os.Getenv("OPENROUTER_API_KEY")
+	apiKey := cfg.OpenRouterKey
 	if apiKey == "" {
 		return "", fmt.Errorf("OPENROUTER_API_KEY environment variable is not set")
 	}

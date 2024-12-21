@@ -5,13 +5,15 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/joho/godotenv"
+	"github.com/charmbracelet/huh"
+
 	cnst "github.com/yansigit/cmd-gpt/constants"
 	"github.com/yansigit/cmd-gpt/lib"
 )
 
+var logger *lib.Logger
+
 func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string, provider string) error {
-	godotenv.Load()
 	var res string
 	prompt := input
 	if commandType == cnst.ShellCodeGen {
@@ -56,10 +58,20 @@ func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string
 	}
 
 	if shell != cnst.None {
-		err := executeCommand(res, shell)
+		logger.Info("Response: ", res)
+		var confirmation bool
+		err := huh.NewConfirm().Title("Execute the command?").Value(&confirmation).Run()
 		if err != nil {
-			fmt.Println("Error occurred during executing the command:", err)
+			logger.Errorf("error receiving confirmation: %v", err)
 			return err
+		}
+		if confirmation {
+			if err := executeCommand(res, shell); err != nil {
+				logger.Errorf("Error occurred during executing the command:", err)
+				return err
+			}
+		} else {
+			logger.Error("Skipped executing the command by the user.")
 		}
 	} else {
 		fmt.Println("Response: ", res)
@@ -80,4 +92,8 @@ func executeCommand(command string, shell cnst.ShellType) error {
 	}
 
 	return nil
+}
+
+func init() {
+	logger = lib.GetLogger()
 }

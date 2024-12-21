@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/joho/godotenv"
 )
 
 func HandleAnthropic(prompt string) (string, error) {
-	godotenv.Load()
 	client := anthropic.NewClient()
 	msg, err := client.Messages.New(context.TODO(), anthropic.MessageNewParams{
 		Model:     anthropic.F(anthropic.ModelClaude3_5HaikuLatest),
