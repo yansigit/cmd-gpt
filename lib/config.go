@@ -1,4 +1,4 @@
-package config
+package lib
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/charmbracelet/huh"
+	"github.com/yansigit/cmd-gpt/constants"
 )
 
 type Config struct {
@@ -30,21 +31,17 @@ func init() {
 		panic(err)
 	}
 	configPath = filepath.Join(configDir, "cmd-gpt", "config.json")
+	logger = GetLogger()
 }
 
 func InitConfig() error {
+	logger.Info("Initializing config...")
 	_, err := os.Stat(configPath)
 	if os.IsNotExist(err) {
-		var apiKey string
-		huh.NewInput().Title("enter your openrouter api key").EchoMode(huh.EchoModePassword).Value(&apiKey).Run()
-		cfg := &Config{
-			DefaultProvider: "openrouter",
-			DefaultModel:    "gemini-2.0-flash",
-			OpenRouterKey:   apiKey,
-		}
-		if err := SaveConfig(cfg); err != nil {
-			return err
-		}
+		logger.Info("Config file not found, creating a new one...")
+		SetProvider()
+	} else {
+		logger.Info("Config file already exists. Skipping initialization...")
 	}
 	return nil
 }
@@ -69,6 +66,45 @@ func LoadConfig() (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func SetProvider() error {
+	cfg, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	var provider string
+	huh.NewSelect[string]().Title("Select a provider").Options(
+		huh.NewOption("OpenRouter", constants.OpenRouter),
+		huh.NewOption("OpenAI", constants.OpenAI),
+		huh.NewOption("Anthropic", constants.Anthropic),
+		huh.NewOption("Google", constants.Google),
+	).Value(&provider).Run()
+
+	var apiKey string
+	huh.NewInput().Title(fmt.Sprintf("enter your %s api key", provider)).EchoMode(huh.EchoModePassword).Value(&apiKey).Run()
+
+	// Check if the API key is valid
+	if apiKey == "" {
+		return fmt.Errorf("API key is empty")
+	}
+
+	switch provider {
+	case constants.OpenAI:
+		cfg.OpenAIKey = apiKey
+	case constants.Anthropic:
+		cfg.AnthropicKey = apiKey
+	case constants.Google:
+		cfg.GoogleAPIKey = apiKey
+	case constants.OpenRouter:
+		cfg.OpenRouterKey = apiKey
+	default:
+		return fmt.Errorf("unsupported provider: %s", provider)
+	}
+
+	cfg.DefaultProvider = provider
+	return SaveConfig(cfg)
 }
 
 func SaveConfig(cfg *Config) error {

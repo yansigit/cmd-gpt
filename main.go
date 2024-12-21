@@ -1,28 +1,28 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 SEONGBIN YOON <yoonsb@outlook.com>
 */
 package main
 
 import (
-	"log"
-
 	"github.com/joho/godotenv"
 	"github.com/yansigit/cmd-gpt/cmd"
-	"github.com/yansigit/cmd-gpt/config"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 func main() {
+	logger := lib.GetLogger()
+
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logger.Fatal("Error loading .env file")
 	}
 
-	err = config.InitConfig()
+	err = lib.InitConfig()
 	if err != nil {
-		log.Fatal("Error initializing config:", err)
+		logger.Fatal("Error initializing config:", err)
 	}
 
-	config.LoadConfig()
+	lib.LoadConfig()
 
 	cmd.Execute()
 }

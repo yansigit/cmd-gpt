@@ -1,15 +1,11 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 SEONGBIN YOON <yoonsb@outlook.com>
 */
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
-	"github.com/yansigit/cmd-gpt/config"
-	"github.com/yansigit/cmd-gpt/handlers"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 // providerCmd represents the provider command
@@ -23,16 +19,17 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// provider, _ := cmd.Flags().GetString("provider")
-		if err := handlers.HandleSetProvider(); err != nil {
-			fmt.Println("Error setting provider:", err)
-			os.Exit(1)
+		logger.Info("Setting default provider...")
+
+		if err := lib.SetProvider(); err != nil {
+			logger.Fatal("Error setting provider:", err)
+			// os.Exit(1)
 		}
-		config, err := config.LoadConfig()
+		config, err := lib.LoadConfig()
 		if err != nil {
-			fmt.Println("Error loading config:", err)
+			logger.Fatal("Error loading config:", err)
 		}
-		fmt.Println("Default provider set to:", config.DefaultProvider)
+		logger.Success("Default provider set to:", config.DefaultProvider)
 	},
 }
 

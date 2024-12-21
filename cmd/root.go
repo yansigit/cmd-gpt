@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 SEONGBIN YOON <yoonsb@outlook.com>
 */
 package cmd
 
@@ -7,7 +7,10 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/yansigit/cmd-gpt/lib"
 )
+
+var logger *lib.Logger
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -24,4 +27,5 @@ func Execute() {
 }
 
 func init() {
+	logger = lib.GetLogger()
 }

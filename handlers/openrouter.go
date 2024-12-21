@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/yansigit/cmd-gpt/config"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 type OpenRouterMessage struct {
@@ -31,7 +31,7 @@ type OpenRouterResponse struct {
 
 func HandleOpenRouter(prompt string) (string, error) {
 	godotenv.Load()
-	cfg, err := config.LoadConfig()
+	cfg, err := lib.LoadConfig()
 	if err != nil {
 		return "", err
 	}

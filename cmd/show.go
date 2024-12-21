@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 SEONGBIN YOON <yoonsb@outlook.com>
 */
 package cmd
 
@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/yansigit/cmd-gpt/config"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 // showCmd represents the show command
@@ -16,9 +16,9 @@ var showCmd = &cobra.Command{
 	Short: "Show the content of current configuration",
 	Long:  `This command is used to show the content of config.json file which contains the default provider, default model, and the keys for the providers. The supported providers are openai, anthropic, google, and openrouter.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig()
+		cfg, err := lib.LoadConfig()
 		if err != nil {
-			fmt.Println("error loading config:", err)
+			logger.Error("error loading config:", err)
 			return
 		}
 		fmt.Printf("%+v\n", cfg)

@@ -6,8 +6,8 @@ import (
 	"os/exec"
 
 	"github.com/joho/godotenv"
-	"github.com/yansigit/cmd-gpt/config"
 	cnst "github.com/yansigit/cmd-gpt/constants"
+	"github.com/yansigit/cmd-gpt/lib"
 )
 
 func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string, provider string) error {
@@ -21,7 +21,7 @@ func HandleChat(commandType cnst.CommandType, shell cnst.ShellType, input string
 		prompt = fmt.Sprintf("Generate a %s command for: %s. Only output the command, no explanations.", shell, input)
 	}
 
-	cfg, err := config.LoadConfig()
+	cfg, err := lib.LoadConfig()
 	if err != nil {
 		return err
 	}
