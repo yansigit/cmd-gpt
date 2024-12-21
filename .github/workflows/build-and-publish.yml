@@ -80,12 +80,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          tag_name: test-release-${{ github.run_number }}
+          release_name: Test Release \#${{ github.run_number }}
           body: |
-            This release contains the latest build of the application for multiple platforms.
-          draft: false
-          prerelease: false
+            This test release was created using GitHub Actions. 
+            It contains binaries built for Linux, macOS, and Windows.
+          draft: true
+          prerelease: true
 
       # Upload each binary to the release
       - name: Upload Linux AMD64 Binary
