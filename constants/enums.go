@@ -1,7 +1,5 @@
 package constants
 
-import "errors"
-
 type CommandType string
 type ShellType string
 
@@ -11,27 +9,8 @@ const (
 )
 
 const (
-	Bash       ShellType = "bash"
-	PowerShell ShellType = "powershell"
-	None       ShellType = ""
-)
-
-const (
 	OpenAI     string = "openai"
 	Anthropic  string = "anthropic"
 	Google     string = "google"
 	OpenRouter string = "openrouter"
 )
-
-func ToShellType(s string) (ShellType, error) {
-	switch s {
-	case string(Bash):
-		return Bash, nil
-	case string(PowerShell):
-		return PowerShell, nil
-	case string(None):
-		return None, nil
-	default:
-		return None, errors.New("invalid shell type")
-	}
-}
