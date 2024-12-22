@@ -23,12 +23,7 @@ var genCmd = &cobra.Command{
 			return
 		}
 
-		shellType, err := cnst.ToShellType(shell)
-		if err != nil {
-			logger.Fatal(err)
-		}
-
-		if err := handlers.HandleChat(cnst.ShellCodeGen, shellType, prompt, ""); err != nil {
+		if err := handlers.HandleChat(cnst.ShellCodeGen, shell, prompt, ""); err != nil {
 			logger.Fatal(err)
 		}
 	},
