@@ -21,11 +21,21 @@ func HandleChat(commandType cnst.CommandType, shell string, input string, provid
 	prompt := input
 	if commandType == cnst.ShellCodeGen {
 		if shell == "" {
-			if os.Getenv("SHELL") == "" {
-				shell = "powershell"
+			logger.Warn("Shell not specified. Will detect shell automatically.")
+			shell = os.Getenv("SHELL")
+			if shell == "" {
+				if os.PathSeparator == '\\' {
+					shell = "powershell" // Default to 'powershell' for Windows
+					logger.Warn("Detected Windows OS. Defaulting to 'Powershell'.")
+				} else {
+					shell = "sh" // Default to 'sh' if no shell is detected
+					logger.Warn("Unable to detect shell. Defaulting to 'sh'.")
+				}
 			} else {
-				shell = filepath.Base(os.Getenv("SHELL"))
+				shell = filepath.Base(shell)
+				logger.Info("Detected shell: ", shell)
 			}
+
 		}
 		prompt = fmt.Sprintf("Generate a %s command for: %s.", shell, input)
 	}
@@ -57,10 +67,10 @@ func HandleChat(commandType cnst.CommandType, shell string, input string, provid
 			return err
 		}
 	default:
-		return fmt.Errorf("invalid provider: %s", provider)
+		return logger.Errorf("invalid provider: %s", provider)
 	}
 
-	logger.Info("Response: ", res)
+	logger.Success("Command from GPT: ", res)
 	var confirmation bool
 	err = huh.NewConfirm().Title("Execute the command?").Value(&confirmation).Run()
 	if err != nil {

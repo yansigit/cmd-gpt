@@ -4,12 +4,13 @@ Copyright © 2024 SEONGBIN YOON <yoonsb@outlook.com>
 package cmd
 
 import (
+	"strings"
+
 	"github.com/spf13/cobra"
 	cnst "github.com/yansigit/cmd-gpt/constants"
 	"github.com/yansigit/cmd-gpt/handlers"
 )
 
-// genCmd represents the gen command
 var genCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "generate shell code",
@@ -18,9 +19,12 @@ var genCmd = &cobra.Command{
 		prompt, _ := cmd.Flags().GetString("prompt")
 		shell, _ := cmd.Flags().GetString("shell")
 
-		if prompt == "" || shell == "" {
-			cmd.Help()
-			return
+		if len(args) > 0 {
+			prompt = strings.Join(args, " ")
+		}
+
+		if prompt == "" {
+			logger.Fatal("Prompt is required")
 		}
 
 		if err := handlers.HandleChat(cnst.ShellCodeGen, shell, prompt, ""); err != nil {
